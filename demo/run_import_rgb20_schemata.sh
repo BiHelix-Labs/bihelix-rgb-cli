@@ -3,7 +3,7 @@ set -e
 CLOSING_METHOD="opret1st"
 DERIVE_PATH="m/86'/1'/0'/9"
 DESC_TYPE="wpkh"
-ELECTRUM="bihelix-testnet-electrs.iftas.tech:50001"
+ELECTRUM="blockstream.info:143"
 CONSIGNMENT="consignment.rgb"
 PSBT="tx.psbt"
 IFACE="RGB20Fixed"
@@ -23,7 +23,7 @@ rgb() {
 }
 # rgb address
 
-# rgb issue $ticker $name $issued_supply $inflation_allowance $method
+rgb issue $ticker $name $issued_supply $inflation_allowance $method
 # schema=$(rgb0 schemata | awk '{print $1}')
-rgb state $conrtact $IFACE
+# rgb state $conrtact $IFACE
 # echo "schema $schema"
