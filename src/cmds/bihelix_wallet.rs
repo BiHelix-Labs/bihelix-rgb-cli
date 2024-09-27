@@ -38,7 +38,7 @@ pub struct BiHelixWallet {
     pub stock: String,
     pub wallet_name: String,
 }
-const ELECTRUM_URL: &str = "bihelix-testnet-electrs.iftas.tech:50001";
+const ELECTRUM_URL: &str = "blockstream.info:143";
 
 
 fn get_indexer() -> AnyIndexer {
