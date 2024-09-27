@@ -166,7 +166,17 @@ impl BiHelixWallet {
         } else {
             println!("success");
         }
-
+        let bp_runtime = self.wallet.wallet();
+        println!("Balance of {} \n", bp_runtime.descriptor());
+        println!("Balance {:?} \n", bp_runtime.balance());
+        println!("\nHeight\t{:>12}\t{:68}", "Amount, ṩ", "Outpoint");
+        for (derived_addr, utxos) in bp_runtime.address_coins() {
+            println!("{:?}\t{:?}", derived_addr.addr, derived_addr.terminal);
+            for row in utxos {
+                println!("{:?}\t{: >12}\t{:68}", row.height, row.amount, row.outpoint);
+            }
+            println!()
+        }
     }
 
     pub fn import_contract(&mut self, contract: &ValidContract, testnet: bool) {
@@ -360,6 +370,8 @@ impl BiHelixWallet {
 #[display(lowercase)]
 #[allow(clippy::large_enum_variant)]
 pub enum BiHelixSubCommand {
+    // Generate a RGB address
+    Address,
  
     /// Prints out list of known RGB contracts
     Contracts,
@@ -372,7 +384,7 @@ pub enum BiHelixSubCommand {
         all: bool,
 
         /// Contract identifier
-        contract_id: ContractId,
+        contract_id: String,
 
         /// Interface to interpret the state data
         iface: String,
@@ -479,6 +491,11 @@ pub fn handle_rgb_subcommand(
     let mut bhlx_wallet = crate::utils::load_wallet(stock_database, wallet_name, master_prv);
 
     match subcommand {
+        BiHelixSubCommand::Address => {
+            let address = bhlx_wallet.get_address();
+            eprintln!("address {:?} \n", address);
+            Ok(JsonNull)
+        }
     
         BiHelixSubCommand::State {
             all: _,
@@ -486,7 +503,8 @@ pub fn handle_rgb_subcommand(
             iface,
             address: _,
         } => {
-            bhlx_wallet.query_state(contract_id, &tn!(iface));
+            let contract = ContractId::from_str(&contract_id).expect("parse contract id failed");
+            bhlx_wallet.query_state(contract, &tn!(iface));
             Ok(JsonNull)
         }
         BiHelixSubCommand::Issue { ticker, name, issued_supply, inflation_allowance: _, method } => {
@@ -499,7 +517,7 @@ pub fn handle_rgb_subcommand(
                 CloseMethod::TapretFirst
             };
             // the Precision just set to default ceti now.
-            let contract_id = bhlx_wallet.issue_nia(&Identity::default().to_string(), &ticker, &name, Precision::Centi, issued_supply, close_method, vec_utxo[0].clone(), testnet);
+            let contract_id = bhlx_wallet.issue_nia(&Identity::default().to_string(), &ticker, &name, Precision::Centi, issued_supply, close_method, vec_utxo[0].clone(), testnet).to_string();
             eprintln!(
                 "A new contract {contract_id} is issued and added to the database.\n"
             );

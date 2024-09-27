@@ -47,7 +47,9 @@ pub enum Command {
             value_hint = ValueHint::DirPath
         )]
         stock_database: String,
+        #[clap(short = 'w', long)]
         wallet_name: String,
+        #[clap(short = 'p', long)]
         master_prv: String,
 
         /// Electrum server to use.

@@ -6,51 +6,15 @@ DESC_TYPE="wpkh"
 ELECTRUM="blockstream.info:143"
 CONSIGNMENT="consignment.rgb"
 PSBT="tx.psbt"
-IFACE="RGB20"
+IFACE="RGB20Fixed"
+conrtact="rgb:WvwsT$tQ-7NAhu$A-IJBzpti-zsh10vn-za4mdZp-i6Ghj!U"
 
+prv="tprv8ZgxMBicQKsPf6A3Li9Yn7Q2X27ytZUncjZFxfjBd3rhhqFrXtzhWsTAswsuYrq52uB2KnqbGWpufieeSvfyYXSw85kgKp4vgfnwiLkWwpf"
 program() {
-    target/release/bihelix-rgb-cli $@
+    target/release/brgb $@
 }
 rgb0() {
     program -n testnet rgb -d data0 -s "$ELECTRUM" $@
 }
-mkdir data{0,core,index}
-
-xprv_0=$(program --network testnet key generate | jq -r '.xprv')
-output=$(program --network testnet key derive -p "$DERIVE_PATH" -x "$xprv_0")
-xprv_der_0=$(echo $output | jq -r '.xprv')
-xpub_der_0=$(echo $output | jq -r '.xpub')
-echo $xprv_der_0
-echo $xpub_der_0
-addr_issue=$(program --network testnet wallet -w issuer -d "$DESC_TYPE($xpub_der_0)" get-new-address | jq -r '.address')
-echo $addr_issue
-
-
-xprv_mid1=$(program --network testnet key generate | jq -r '.xprv')
-output=$(program --network testnet key derive -p "$DERIVE_PATH" -x "$xprv_mid1")
-xprv_der_0=$(echo $output | jq -r '.xprv')
-xpub_der_0=$(echo $output | jq -r '.xpub')
-echo $xprv_der_0
-echo $xpub_der_0
-addr_issue=$(program --network testnet wallet -w mid_issuer1 -d "$DESC_TYPE($xpub_der_0)" get-new-address | jq -r '.address')
-echo $addr_issue
-
-xprv_mid2=$(program --network testnet key generate | jq -r '.xprv')
-output=$(program --network testnet key derive -p "$DERIVE_PATH" -x "$xprv_mid2")
-xprv_der_0=$(echo $output | jq -r '.xprv')
-xpub_der_0=$(echo $output | jq -r '.xpub')
-echo $xprv_der_0
-echo $xpub_der_0
-addr_issue=$(program --network testnet wallet -w mid_issuer2 -d "$DESC_TYPE($xpub_der_0)" get-new-address | jq -r '.address')
-echo $addr_issue
-
-xprv_mid3=$(program --network testnet key generate | jq -r '.xprv')
-output=$(program --network testnet key derive -p "$DERIVE_PATH" -x "$xprv_mid3")
-xprv_der_0=$(echo $output | jq -r '.xprv')
-xpub_der_0=$(echo $output | jq -r '.xpub')
-echo $xprv_der_0
-echo $xpub_der_0
-addr_issue=$(program --network testnet wallet -w mid_issuer3 -d "$DESC_TYPE($xpub_der_0)" get-new-address | jq -r '.address')
-echo $addr_issue
-
-
+# program key generate-wallet -d wpkh -x $prv --stock bhlx_stock --wallet bob_wallet
+rgb0 state $conrtact $IFACE
